@@ -1,0 +1,11 @@
+[submodule "8.2"]
+	path = 8.2
+	url = git@github.com:pmmp/php-build-scripts.git
+	branch = php/8.2
+[submodule "8.1"]
+	path = 8.1
+	url = git@github.com:pmmp/php-build-scripts.git
+	branch = php/8.1
+[submodule "8.0"]
+	path = 8.0
+	url = git@github.com:pmmp/php-build-scripts.git
