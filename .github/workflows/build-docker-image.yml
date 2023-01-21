@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run: git submodule update ${{ matrix.tag }}
+      - run: git submodule update --init ${{ matrix.tag }}
 
       - name: Get repository name
         id: repo-name
@@ -44,7 +44,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          context: ./${{ matrix.tag }}
+          context: ${{ matrix.tag }}
           file: Dockerfile
           tags: |
             ghcr.io/${{ steps.repo-name.outputs.value }}:${{ matrix.tag }}
