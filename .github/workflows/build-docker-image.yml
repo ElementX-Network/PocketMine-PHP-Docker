@@ -24,7 +24,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run: git submodule update --init ${{ matrix.tag }}
+        with:
+          submodules: true
 
       - name: Get repository name
         id: repo-name
