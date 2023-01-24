@@ -22,7 +22,7 @@ RUN apt-get update \
 
 RUN mkdir /build
 WORKDIR /build
-COPY compile.sh /build/
+COPY compile.sh .
 
 RUN ./compile.sh -t linux64 -j ${THREADS:-$(grep -E ^processor /proc/cpuinfo | wc -l)} ${COMPILE_SH_ARGS} \
     && mv bin/php7 /usr/php \

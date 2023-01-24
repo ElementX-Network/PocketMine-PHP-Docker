@@ -6,28 +6,21 @@ on:
       - main
 
 jobs:
-  build-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      value: ${{ steps.php-versions.outputs.value }}
-
-    steps:
-      - uses: actions/checkout@v3
-      - id: php-versions
-        run: echo "value=$(git submodule status | awk '{print "\""$2"\""}' | jq -sc)" >> $GITHUB_OUTPUT
-
   build:
     runs-on: ubuntu-latest
-    needs: build-matrix
     strategy:
       fail-fast: false
       matrix:
-        tag: ${{ fromJson(needs.build-matrix.outputs.value) }}
+        pm-version: [4, 5]
+        branch: [stable, php/8.1, php/8.2]
 
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          submodules: true
+          repository: pmmp/php-build-scripts
+          ref: ${{ matrix.branch }}
+          path: build/
 
       - name: Get repository name
         id: repo-name
@@ -43,11 +36,17 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get PHP version
+        id: php-version
+        run: echo "value=$(grep -oP '(?<=PHP_VERSION=\").+(?=\")' build/compile.sh | awk -F'.' '{print $1 "." $2}')" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           push: true
-          context: ${{ matrix.tag }}
+          context: build/
           file: Dockerfile
           tags: |
-            ghcr.io/${{ steps.repo-name.outputs.value }}:${{ matrix.tag }}
+            ghcr.io/${{ steps.repo-name.outputs.value }}:${{ matrix.pm-version }}-${{ steps.php-version.outputs.value }}
+          build-args: |
+            COMPILE_SH_ARGS="-f -g -P ${{ matrix.pm-version }}"

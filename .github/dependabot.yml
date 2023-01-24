@@ -1,12 +1,6 @@
 version: 2
 
 updates:
-  - package-ecosystem: gitsubmodule
-    directory: /
-    schedule:
-      timezone: Asia/Tokyo
-      time: "06:00"
-      interval: daily
   - package-ecosystem: github-actions
     directory: /
     schedule:
