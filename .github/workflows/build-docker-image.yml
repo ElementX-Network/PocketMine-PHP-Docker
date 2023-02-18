@@ -49,4 +49,4 @@ jobs:
           tags: |
             ghcr.io/${{ steps.repo-name.outputs.value }}:${{ matrix.pm-version }}-${{ steps.php-version.outputs.value }}
           build-args: |
-            COMPILE_SH_ARGS="-f -g -P ${{ matrix.pm-version }}"
+            PM_VERSION="${{ matrix.pm-version }}"
