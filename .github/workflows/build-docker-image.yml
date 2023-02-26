@@ -50,4 +50,4 @@ jobs:
           tags: |
             ghcr.io/${{ steps.repo-name.outputs.value }}:${{ matrix.pm-version }}-${{ steps.php-version.outputs.value }}
           build-args: |
-            PM_VERSION="${{ matrix.pm-version }}"
+            PM_VERSION=${{ matrix.pm-version }}
