@@ -1,0 +1,33 @@
+name: Please don't stop Cron
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  push-empty-commit-if-needed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get last pushed time
+        id: get-last-pushed-time
+        run: |
+          PUSHED_AT=$(gh repo view ${{ github.repository }} --json 'pushedAt' --jq '.pushedAt | fromdate')
+          echo "value=$PUSHED_AT" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if push is needed
+        id: check-if-push-is-needed
+        continue-on-error: true
+        run: |
+          # 60日で止まる
+          test "$(( ( $(date '+%s') - ${{ steps.get-last-pushed-time.outputs.value }} ) / 86400 ))" -ge 50
+      - uses: actions/checkout@v3
+        if: ${{ steps.check-if-push-is-needed.outcome == 'success' }}
+      - name: Push empty commit
+        if: ${{ steps.check-if-push-is-needed.outcome == 'success' }}
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit --allow-empty -m "chore: please don't stop cron"
+          git push
