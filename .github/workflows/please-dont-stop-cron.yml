@@ -13,7 +13,7 @@ jobs:
         id: get-last-pushed-time
         run: |
           PUSHED_AT=$(gh repo view ${{ github.repository }} --json 'pushedAt' --jq '.pushedAt | fromdate')
-          echo "value=$PUSHED_AT" >> $GITHUB_ENV
+          echo "value=$PUSHED_AT" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check if push is needed
